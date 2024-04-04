@@ -1,0 +1,51 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Memory.hdl
+
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory 
+ * location specified by address. If load==1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used. 
+ * Access to address>0x6000 is invalid. Access to any address in 
+ * the range 0x4000-0x5FFF results in accessing the screen memory 
+ * map. Access to address 0x6000 results in accessing the keyboard 
+ * memory map. The behavior in these addresses is described in the 
+ * Screen and Keyboard chip specifications given in the book.
+ */
+
+CHIP Memory {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    // if address[14] == 0, the address is smaller than 16383 and we need to load RAM16K
+    // otherwise, the address is greater than 16383 and we need to load Keyboard or Screen
+    DMux(in=load, sel=address[14], a=loadram, b=loadkbdscrn);
+
+    // if address[14] == 0 and address[13] == 0, the number is between 16384 and 24575 and we need to load Screen
+    // otherwise, the number is greater than 24575 (=24576) and we need to load Keyboard
+    DMux(in=loadkbdscrn, sel=address[13], a=loadscrn, b=loadkbd);
+
+    // put in and the loads to RAM16K, Screen and to Keyboard
+    RAM16K(in=in, load=loadram, address=address[0..13], out=outram);
+    Screen(in=in, load=loadscrn, address=address[0..12], out=outscrn);
+    Keyboard(out=outkbd);
+
+    // check whether in was loaded to Screen or to Keyboard
+    Mux16(a=outscrn, b=outkbd, sel=address[13], out=outinputs);
+    Mux16(a=outram, b=outinputs, sel=address[14], out=out);
+    
+
+
+
+    
+}

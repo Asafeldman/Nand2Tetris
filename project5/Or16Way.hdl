@@ -1,0 +1,22 @@
+CHIP Or16Way {
+    IN in[16];
+    OUT out;
+
+    // Created by Assaf Feldman for use in project 2
+    PARTS:
+    Or(a=in[0], b=in[1], out=orto1);
+    Or(a=orto1, b=in[2], out=orto2);
+    Or(a=orto2, b=in[3], out=orto3);
+    Or(a=orto3, b=in[4], out=orto4);
+    Or(a=orto4, b=in[5], out=orto5);
+    Or(a=orto5, b=in[6], out=orto6);
+    Or(a=orto6, b=in[7], out=orto7);
+    Or(a=orto7, b=in[8], out=orto8);
+    Or(a=orto8, b=in[9], out=orto9);
+    Or(a=orto9, b=in[10], out=orto10);
+    Or(a=orto10, b=in[11], out=orto11);
+    Or(a=orto11, b=in[12], out=orto12);
+    Or(a=orto12, b=in[13], out=orto13);
+    Or(a=orto13, b=in[14], out=orto14);
+    Or(a=orto14, b=in[15], out=out);
+}
